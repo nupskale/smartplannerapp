@@ -1,0 +1,86 @@
+
+/* login styles */
+body{
+	font-family: 'Open Sans', sans-serif;
+}
+h1.app-title{
+	color: #333333;
+	text-align: center;
+	margin: 40px 0 20px;
+}
+p.app-tagline{
+	text-align: center;
+	color: #333333;
+	font-size: 14px;
+	font-weight: bolder;
+}
+.app-logo{
+	text-align: center;
+	margin: 40px 0;
+}
+.login-container.pane{
+	background-color: #A7FFEB;
+}
+.google-signin{
+	text-align: center;
+	margin-top: 80px;
+}
+.google-signin .button{
+	width: 300px;
+}
+
+/* homepage styles */
+.content.has-header{
+	top: 0;
+}
+
+.header-container{
+	text-align: center;
+	padding: 10px 0;
+    background-color: #333333;
+}
+
+.header-container h4{
+	color: #efefef;
+    font-weight: normal;
+    display: inline-block;
+    margin-left: 45px;
+}
+
+.header-container img.userpic{
+	height: 35px;
+    width: 35px;
+    border: 1px solid #A7FFEB;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.logout-container{
+	text-align: right;
+}
+
+.logout-container .button-assertive{
+	margin: 10px 10px 10px 0;
+}
+
+.calendar-button-container{
+	text-align: center;
+}
+
+.calendar-button-container button{
+	width: 300px;
+	margin-bottom: 20px;
+}
+
+li.item{
+	font-size: 14px;
+}
+
+li.item span{
+	width: 25%;
+	display: inline-block;
+}
+
+li.item span.eventname{
+	width: 20%;
+}
