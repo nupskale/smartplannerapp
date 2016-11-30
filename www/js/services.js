@@ -21,7 +21,3 @@ app.factory('UserService', function(){
 	};
 	return userdata;
 });
-
-app.factory('MessageService', ['$http',function($http){
-	var messages = {};
-}]);

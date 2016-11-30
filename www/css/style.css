@@ -34,6 +34,11 @@ p.app-tagline{
 	top: 0;
 }
 
+.content h4{
+	margin: 20px 0 20px 20px;
+	color: #333333;
+}
+
 .header-container{
 	text-align: center;
 	padding: 10px 0;
@@ -45,6 +50,15 @@ p.app-tagline{
     font-weight: normal;
     display: inline-block;
     margin-left: 45px;
+}
+
+.header-container a.logout-button{
+	display: inline-block;
+    position: absolute;
+    right: 10px;
+    font-size: 20px;
+    padding: 10px;
+    color: #A7FFEB;
 }
 
 .header-container img.userpic{

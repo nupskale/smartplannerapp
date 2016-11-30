@@ -8,6 +8,8 @@ app.controller('LoginCtrl', function($scope, $state, UserService){
 		provider.addScope('https://mail.google.com/')
 		provider.addScope('https://www.googleapis.com/auth/gmail.readonly');
 		provider.addScope('https://www.googleapis.com/auth/gmail.modify');
+		provider.addScope('https://www.googleapis.com/auth/calendar');
+		provider.addScope('https://www.googleapis.com/auth/calendar');
 		firebase.auth().signInWithRedirect(provider);
 	};
 
@@ -71,27 +73,27 @@ app.controller('LoginCtrl', function($scope, $state, UserService){
 		})();
 	};
 		
-		$scope.getDeadlines = function(allMessages, lenMsgs){
-			var subsArr = [];
-			var bodyArr = [];
-			$scope.allMessagesList = [];
-			if(allMessages.length == lenMsgs){
-				$scope.allMessagesList = allMessages;
-				/*console.log($scope.allMessagesList);*/
-				for(j=0; j<$scope.allMessagesList.length; j++){
-					for(k=0; k<$scope.allMessagesList[j].payload.headers.length; k++){
-						if ($scope.allMessagesList[j].payload.headers[k].name == "Subject"){
-							subsArr.push($scope.allMessagesList[j].payload.headers[k].value);
-						}
+	$scope.getDeadlines = function(allMessages, lenMsgs){
+		var subsArr = [];
+		var bodyArr = [];
+		$scope.allMessagesList = [];
+		if(allMessages.length == lenMsgs){
+			$scope.allMessagesList = allMessages;
+			/*console.log($scope.allMessagesList);*/
+			for(j=0; j<$scope.allMessagesList.length; j++){
+				for(k=0; k<$scope.allMessagesList[j].payload.headers.length; k++){
+					if ($scope.allMessagesList[j].payload.headers[k].name == "Subject"){
+						subsArr.push($scope.allMessagesList[j].payload.headers[k].value);
 					}
-					bodyArr.push($scope.allMessagesList[j].snippet);
-				}	
-				/*console.log(subsArr);*/
-				UserService.sendSubjectLine(subsArr);		
-				UserService.sendBody(bodyArr);
-			}
-			$state.go('homepage');
-		};
+				}
+				bodyArr.push($scope.allMessagesList[j].snippet);
+			}	
+			/*console.log(subsArr);*/
+			UserService.sendSubjectLine(subsArr);		
+			UserService.sendBody(bodyArr);
+		}
+		$state.go('homepage');
+	};
 
 	if(UserService.getUser()!=undefined){
 		$scope.currentUser = UserService.getUser();
@@ -119,20 +121,23 @@ app.controller('HomepageCtrl', function($scope, $state, UserService){
 	  $scope.username = $scope.tempname;
 	});
 
-	$scope.userprofilepic = UserService.getUser().photoURL;
+	$scope.getuserprofilepic = function(){
+		return UserService.getUser().photoURL;
+	};
 
-	
-	$scope.initData = function(){
+	$scope.eventsArray = [{}];
+
+	$scope.formatData = function(){
 		$scope.subjectsArray = UserService.getSubjectLine();
 		$scope.subjects = $scope.subjectsArray;
 		$scope.assignmentArray = UserService.getBody();
-		$scope.assignment = $scope.assignmentArray;
-		$scope.eventsArray = [{}];
+		$scope.assignment = $scope.assignmentArray;		
 		$scope.title = [];
 		$scope.duedate = [];
 		$scope.lastindexspace = 0;
 		$scope.dateparsestring = [];
 		$scope.dateNow = new Date();
+		$scope.dateNow = String($scope.dateNow).split(/\s+/).slice(1,4).join(" ");
 		$scope.eventsArray.pop();
 
 		if($scope.subjects){
@@ -142,7 +147,7 @@ app.controller('HomepageCtrl', function($scope, $state, UserService){
 				$scope.duedate[i] = $scope.assignment[i].split("has been released and is due")[1];
 				$scope.lastindexspace = $scope.duedate[i].lastIndexOf(" ");
 				$scope.dateparsestring[i] = $scope.duedate[i].substr(0, $scope.lastindexspace);				
-				if(Date.parse($scope.dateparsestring[i]) - Date.parse($scope.dateNow) > 0){					
+				if(Date.parse($scope.dateparsestring[i]) - Date.parse($scope.dateNow) >= 0){					
 					$scope.eventsArray.push({"name":$scope.subjects[i].trim().split('-')[0], "assignment":$scope.assignment[i].trim(), "title":$scope.title[i].trim(), "due":$scope.duedate[i].trim()});					
 				}				
 			}
@@ -151,15 +156,20 @@ app.controller('HomepageCtrl', function($scope, $state, UserService){
 		if($scope.subjects && $scope.subjects.length==0){
 			$scope.eventsArray = {"name":"You do not have any upcoming deadlines"};
 		}
-		/*console.log($scope.eventsArray);*/
+
 		return $scope.eventsArray;
+	};
+
+	$scope.events = function(){
+		return $scope.formatData();
 	};
 
 	$scope.eventChecked = false;
 
+	$scope.eventsCompleted = [{}];
+
 	$scope.markAsComplete = function(assignmentName, index){
-			console.log(assignmentName);
-			console.log(index);
+		$scope.eventsCompleted.push(assignmentName);
 	}
 
 	$scope.logoutUser = function(){
@@ -171,7 +181,4 @@ app.controller('HomepageCtrl', function($scope, $state, UserService){
 		});
 	};
 
-	$scope.markAsDone = function(item) {
-		/*console.log(item);*/
-	}
 });
