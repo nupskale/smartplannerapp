@@ -16,13 +16,13 @@
 			<ul class="list">
 		        <li class="item item-checkbox" ng-repeat="subj in events() track by $index">
 		           <label class="checkbox">
-		             <input type="checkbox" ng-model="eventstatus" ng-click="markAsComplete(subj, $index); eventChecked =! eventChecked">
+		             <input type="checkbox" ng-click="markAsComplete(subj, $index); eventChecked =! eventChecked">
 		           </label>
 		           <label ng-class="{doneClass:eventChecked}"><span class="eventname">{{subj.name}}</span><span class="assignmentname">{{subj.title}}</span><span class="duedate">{{subj.due}}</span><span class="doneMessage" ng-if="eventChecked">Completed!</span></label>
 		        </li>
 		      </ul>
 		      <div class="calendar-button-container">
-				<button type="button" class="button button-assertive" ng-disabled="">Add to Google Calendar</button>
+				<button type="button" class="button button-assertive" ng-click="addToCalendar();">Add to Google Calendar</button>
 			  </div>
 		</div>	
 			

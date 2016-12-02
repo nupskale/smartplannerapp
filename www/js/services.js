@@ -2,7 +2,8 @@ app.factory('UserService', function(){
 	var userdata = {};
 	userdata.sendUser = function(userdetails){
 		this.userdetails = userdetails;
-	};
+		/*console.log(userdetails);*/
+	};	
 	userdata.getUser = function(){
 		return this.userdetails;
 	};
@@ -19,5 +20,11 @@ app.factory('UserService', function(){
 	userdata.getBody = function(){
 		return this.mailbody;
 	};
+	userdata.sendToken = function(token){
+		this.token = token;
+	}
+	userdata.getToken = function(){
+		return this.token;
+	}
 	return userdata;
 });

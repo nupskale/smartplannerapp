@@ -9,7 +9,7 @@ app.controller('LoginCtrl', function($scope, $state, UserService){
 		provider.addScope('https://www.googleapis.com/auth/gmail.readonly');
 		provider.addScope('https://www.googleapis.com/auth/gmail.modify');
 		provider.addScope('https://www.googleapis.com/auth/calendar');
-		provider.addScope('https://www.googleapis.com/auth/calendar');
+		provider.addScope('https://www.googleapis.com/auth/calendar.readonly');
 		firebase.auth().signInWithRedirect(provider);
 	};
 
@@ -18,17 +18,14 @@ app.controller('LoginCtrl', function($scope, $state, UserService){
 	firebase.auth().getRedirectResult().then(function(result) {
 		  if (result.credential) {
 		    // This gives you a Google Access Token.
-		    token = result.credential.accessToken;
-		    /*console.log(token);*/		   
+		    token = result.credential.accessToken;	   
 		  }
 		  var user = result.user;
-		  /*console.log(user);*/
 	});
 
 	firebase.auth().onAuthStateChanged(function(user) {		
 	    if (user) {
-	      // User is signed in.	      
-	      /*console.log(user);*/
+	      // User is signed in.
 	      $scope.currUser = firebase.auth().currentUser;
 	      UserService.sendUser($scope.currUser);
 	      $scope.currUserId = $scope.currUser.providerData[0].uid;
@@ -79,7 +76,6 @@ app.controller('LoginCtrl', function($scope, $state, UserService){
 		$scope.allMessagesList = [];
 		if(allMessages.length == lenMsgs){
 			$scope.allMessagesList = allMessages;
-			/*console.log($scope.allMessagesList);*/
 			for(j=0; j<$scope.allMessagesList.length; j++){
 				for(k=0; k<$scope.allMessagesList[j].payload.headers.length; k++){
 					if ($scope.allMessagesList[j].payload.headers[k].name == "Subject"){
@@ -91,6 +87,7 @@ app.controller('LoginCtrl', function($scope, $state, UserService){
 			/*console.log(subsArr);*/
 			UserService.sendSubjectLine(subsArr);		
 			UserService.sendBody(bodyArr);
+			UserService.sendToken(token);
 		}
 		$state.go('homepage');
 	};
@@ -98,7 +95,6 @@ app.controller('LoginCtrl', function($scope, $state, UserService){
 	if(UserService.getUser()!=undefined){
 		$scope.currentUser = UserService.getUser();
 		$scope.currentUserId = $scope.currentUser.providerData[0].uid;
-		/*console.log($scope.currentUserId);*/
 	}	
 
 	function writeUserData(currUser) {
@@ -170,7 +166,46 @@ app.controller('HomepageCtrl', function($scope, $state, UserService){
 
 	$scope.markAsComplete = function(assignmentName, index){
 		$scope.eventsCompleted.push(assignmentName);
-	}
+	};
+
+	$scope.monthKey = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+	$scope.addToCalendar = function(){
+		  $scope.thetoken = UserService.getToken();
+		  var xhttp = new XMLHttpRequest();		  		  
+		  xhttp.open("POST", "https://www.googleapis.com/calendar/v3/calendars/primary/events?access_token="+$scope.thetoken, true);
+		  xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");		  
+		  xhttp.onreadystatechange = function() {
+		    if (xhttp.readyState == 4 && xhttp.status == 200) {
+		      console.log(JSON.parse(xhttp.responseText));
+		    }
+		  };
+
+		  // format event dates for calendar api input
+		  var cdate = $scope.eventsArray[0].due.replace(",", "").split(" ");
+		  var cdateYear = cdate[2];
+
+		  if(parseInt(cdate[1]) < 10){
+		  	var cdateDay = "0"+cdate[1];
+		  } else{
+		  	var cdateDay = cdate[1];
+		  }
+
+		  var cdateMonth = $scope.monthKey.indexOf(cdate[0])+1;
+
+		  var calDate = cdateYear+"-"+cdateMonth+"-"+cdateDay;
+
+		  var calendarEntry = {};
+		  calendarEntry.summary = $scope.eventsArray[0].name+$scope.eventsArray[0].title;
+		  calendarEntry.start = {};
+		  calendarEntry.start.date = calDate;
+		  calendarEntry.end = {};
+		  calendarEntry.end.date = calDate;
+		  calendarEntry.reminders = {};
+		  calendarEntry.reminders.useDefault = true;
+
+		  xhttp.send(JSON.stringify(calendarEntry));
+	};
 
 	$scope.logoutUser = function(){
 		firebase.auth().signOut().then(function() {
