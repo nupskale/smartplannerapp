@@ -106,7 +106,135 @@ app.controller('LoginCtrl', function($scope, $state, UserService){
 	};
 });
 
-app.controller('HomepageCtrl', function($scope, $state, UserService){
+app.controller('HomepageCtrl', function($scope, $state, UserService, $ionicModal){
+
+	$scope.eventChecked = false;
+	$scope.eventModel = 1;
+
+	$scope.eventsArray = [{}];
+	$scope.eventsArray.pop();
+	$scope.eventsCompleted = [{}];
+	$scope.eventsCompleted.pop();
+	$scope.assnmtid = "";
+
+	$scope.iter = 0;
+
+	$scope.formatData = function(){
+		$scope.subjectsArray = UserService.getSubjectLine();
+		$scope.subjects = $scope.subjectsArray;
+		$scope.assignmentArray = UserService.getBody();
+		$scope.assignment = $scope.assignmentArray;		
+		$scope.title = [];
+		$scope.duedate = [];
+		$scope.lastindexspace = 0;
+		$scope.dateparsestring = [];
+		$scope.dateNow = new Date();
+		$scope.dateNow = String($scope.dateNow).split(/\s+/).slice(1,4).join(" ");		
+		if($scope.subjects && $scope.iter==0){
+			for(i=0; i<$scope.subjects.length; i++){
+				$scope.assignment[i] = $scope.assignment[i].split('.')[0];
+				$scope.title[i] = $scope.assignment[i].split("has been released and is due")[0];
+				$scope.duedate[i] = $scope.assignment[i].split("has been released and is due")[1];
+				$scope.lastindexspace = $scope.duedate[i].lastIndexOf(" ");				
+				// commented code below for showing assignments having due date equal to today or later, commented to show all deadlines currently				
+				/*$scope.dateparsestring[i] = $scope.duedate[i].substr(0, $scope.lastindexspace);
+				if(Date.parse($scope.dateparsestring[i]) - Date.parse($scope.dateNow) >= 0){					
+					$scope.eventsArray.push({"name":$scope.subjects[i].trim().split('-')[0], "assignment":$scope.assignment[i].trim(), "title":$scope.title[i].trim(), "due":$scope.duedate[i].trim()});
+				}*/	
+				$scope.eventsArray.push({"name":$scope.subjects[i].trim().split('-')[0], "assignment":$scope.assignment[i].trim(), "title":$scope.title[i].trim(), "due":$scope.duedate[i].trim()});			
+			}
+			$scope.iter=1;
+		}
+		
+		if($scope.subjects && $scope.subjects.length==0){
+			$scope.eventsArray = {"name":"You do not have any upcoming deadlines"};
+		}
+		return $scope.eventsArray;
+	};
+
+	$scope.events = function(){
+		return $scope.formatData();
+	};
+
+	$scope.monthKey = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+	$scope.markAsComplete = function(assignmentName, index, checked){
+		//$scope.eventsCompleted.push(assignmentName);
+		$scope.remInd = 0;
+		if(checked==false){
+			$scope.eventsCompleted.push(assignmentName);
+			checked = true;
+		}else{
+			$scope.remInd = $scope.eventsCompleted.findIndex(x => x.assignment == assignmentName.assignment);
+			$scope.eventsCompleted.splice($scope.remInd, 1);
+			checked = false;
+		}
+	};
+
+
+
+
+	$ionicModal.fromTemplateUrl('calendar-modal.html', {
+	    scope: $scope,
+	    animation: 'slide-in-up'
+	  }).then(function(modal) {
+	    $scope.modal2 = modal;
+	  });
+	  $scope.openCalModal = function(){
+	  	$scope.modal2.show();
+	  };
+	  $scope.closeCalModal = function() {
+	    $scope.modal2.hide();
+	  };
+
+	$ionicModal.fromTemplateUrl('event-modal.html', {
+	    scope: $scope,
+	    animation: 'slide-in-up'
+	  }).then(function(modal) {
+	    $scope.modal1 = modal;
+	  });
+	  $scope.eventtodelete = {};
+	  $scope.removeInd = 0;
+	  $scope.openDeleteModal = function(eventstr, eventstrike, eventId) {
+	  	$scope.assnmtid = eventId;
+	  	$scope.eventModel = 0;
+	  	$scope.eventtodelete = eventstr;
+	    $scope.modal1.show();
+	  };
+	  $scope.deleteEvent = function(){
+	  	$scope.eventChecked = false;
+	  	$scope.removeInd = $scope.eventsArray.findIndex(x => x.assignment == $scope.eventtodelete.assignment);		
+		$scope.eventsArray.splice($scope.removeInd, 1);
+		var targetElem = document.getElementById("listItem"+$scope.assnmtid);
+		angular.element(targetElem).children("div.doneClass").removeClass("doneClass");
+		angular.element(targetElem).children("div.checkbox input").removeAttr("checked");
+		$scope.eventModel = 0;
+		$scope.modal1.hide();
+	  };
+	  $scope.closeModal = function() {
+	    $scope.modal1.hide();
+	    $scope.eventModel = 1;
+	  };
+	  // Cleanup the modal when we're done with it!
+	  $scope.$on('$destroy', function() {
+	    $scope.modal1.remove();
+	    $scope.modal2.remove();
+	  });
+	  // Execute action on hide modal
+	  $scope.$on('modal.hidden', function() {
+	    // Execute action
+	  });
+	  // Execute action on remove modal
+	  $scope.$on('modal.removed', function() {
+	    // Execute action
+	  });
+
+
+	/*$scope.deleteEvent = function(asnmname){
+		$scope.removeInd = $scope.eventsArray.findIndex(x => x.assignment == asnmname.assignment);
+		$scope.eventsArray.splice($scope.removeInd, 1);
+	};
+*/
 
 	var userNow = firebase.auth().currentUser.uid;
 	$scope.subjectsArray = [];
@@ -121,90 +249,57 @@ app.controller('HomepageCtrl', function($scope, $state, UserService){
 		return UserService.getUser().photoURL;
 	};
 
-	$scope.eventsArray = [{}];
-
-	$scope.formatData = function(){
-		$scope.subjectsArray = UserService.getSubjectLine();
-		$scope.subjects = $scope.subjectsArray;
-		$scope.assignmentArray = UserService.getBody();
-		$scope.assignment = $scope.assignmentArray;		
-		$scope.title = [];
-		$scope.duedate = [];
-		$scope.lastindexspace = 0;
-		$scope.dateparsestring = [];
-		$scope.dateNow = new Date();
-		$scope.dateNow = String($scope.dateNow).split(/\s+/).slice(1,4).join(" ");
-		$scope.eventsArray.pop();
-
-		if($scope.subjects){
-			for(i=0; i<$scope.subjects.length; i++){
-				$scope.assignment[i] = $scope.assignment[i].split('.')[0];
-				$scope.title[i] = $scope.assignment[i].split("has been released and is due")[0];
-				$scope.duedate[i] = $scope.assignment[i].split("has been released and is due")[1];
-				$scope.lastindexspace = $scope.duedate[i].lastIndexOf(" ");
-				$scope.dateparsestring[i] = $scope.duedate[i].substr(0, $scope.lastindexspace);				
-				if(Date.parse($scope.dateparsestring[i]) - Date.parse($scope.dateNow) >= 0){					
-					$scope.eventsArray.push({"name":$scope.subjects[i].trim().split('-')[0], "assignment":$scope.assignment[i].trim(), "title":$scope.title[i].trim(), "due":$scope.duedate[i].trim()});					
-				}				
-			}
-		}
-		
-		if($scope.subjects && $scope.subjects.length==0){
-			$scope.eventsArray = {"name":"You do not have any upcoming deadlines"};
-		}
-
-		return $scope.eventsArray;
-	};
-
-	$scope.events = function(){
-		return $scope.formatData();
-	};
-
-	$scope.eventChecked = false;
-
-	$scope.eventsCompleted = [{}];
-
-	$scope.markAsComplete = function(assignmentName, index){
-		$scope.eventsCompleted.push(assignmentName);
-	};
-
-	$scope.monthKey = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
 	$scope.addToCalendar = function(){
 		  $scope.thetoken = UserService.getToken();
-		  var xhttp = new XMLHttpRequest();		  		  
-		  xhttp.open("POST", "https://www.googleapis.com/calendar/v3/calendars/primary/events?access_token="+$scope.thetoken, true);
-		  xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");		  
-		  xhttp.onreadystatechange = function() {
-		    if (xhttp.readyState == 4 && xhttp.status == 200) {
-		      console.log(JSON.parse(xhttp.responseText));
-		    }
-		  };
+		  
+		  var removeIndex = 0;
+		  $scope.calendarEventsArray = angular.copy($scope.eventsArray);
 
-		  // format event dates for calendar api input
-		  var cdate = $scope.eventsArray[0].due.replace(",", "").split(" ");
-		  var cdateYear = cdate[2];
+		  for(j=0; j<$scope.eventsCompleted.length; j++){
+		  	removeIndex = $scope.calendarEventsArray.findIndex(x => x.assignment == $scope.eventsCompleted[j].assignment);
+		  	$scope.calendarEventsArray.splice(removeIndex, 1);
+		  }	
 
-		  if(parseInt(cdate[1]) < 10){
-		  	var cdateDay = "0"+cdate[1];
-		  } else{
-		  	var cdateDay = cdate[1];
-		  }
+		  var cdate = "";  
+		  var cdateYear = "";
+		  var cdateDay = "";
+		  var cdateMonth = "";
+		  var calDate = "";		  
+		 
+		  var g = (function(){
+			for(k=0; k<$scope.calendarEventsArray.length; k++){
+				$scope.calendarEntry = [{}];
+		  		$scope.calendarEntry.pop();
+    			(function(k){
+    				// format event dates for calendar api input
+					cdate = $scope.calendarEventsArray[k].due.replace(",", "").split(" ");
+					cdateYear = cdate[2];
 
-		  var cdateMonth = $scope.monthKey.indexOf(cdate[0])+1;
+					if(parseInt(cdate[1]) < 10){
+						cdateDay = "0"+cdate[1];
+					} else{
+						cdateDay = cdate[1];
+					}
 
-		  var calDate = cdateYear+"-"+cdateMonth+"-"+cdateDay;
+					cdateMonth = $scope.monthKey.indexOf(cdate[0])+1;
 
-		  var calendarEntry = {};
-		  calendarEntry.summary = $scope.eventsArray[0].name+$scope.eventsArray[0].title;
-		  calendarEntry.start = {};
-		  calendarEntry.start.date = calDate;
-		  calendarEntry.end = {};
-		  calendarEntry.end.date = calDate;
-		  calendarEntry.reminders = {};
-		  calendarEntry.reminders.useDefault = true;
+					calDate = cdateYear+"-"+cdateMonth+"-"+cdateDay;
 
-		  xhttp.send(JSON.stringify(calendarEntry));
+		  			$scope.summaryname = $scope.calendarEventsArray[k].name+$scope.calendarEventsArray[k].title;
+		  	  		$scope.calendarEntry.push({"summary":$scope.summaryname, "start":{"date":calDate}, "end":{"date":calDate}, "reminders":{"useDefault":true}});
+					var xhttp = new XMLHttpRequest();
+		  	  		xhttp.open("POST", "https://www.googleapis.com/calendar/v3/calendars/primary/events?access_token="+$scope.thetoken, true);
+				  	xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");		  
+				  	xhttp.onreadystatechange = function() {
+				    	if (xhttp.readyState == 4 && xhttp.status == 200) {
+				      		console.log(JSON.parse(xhttp.responseText));
+				    	}
+			  		};
+			  		console.log($scope.calendarEntry[0]);
+					xhttp.send(JSON.stringify($scope.calendarEntry[0]));  
+		  			})(k);
+		  		}
+		  })();
 	};
 
 	$scope.logoutUser = function(){

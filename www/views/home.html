@@ -14,16 +14,54 @@
 			<h4>Your upcoming deadlines</h4>
 			<div id="message-list"></div>
 			<ul class="list">
-		        <li class="item item-checkbox" ng-repeat="subj in events() track by $index">
-		           <label class="checkbox">
-		             <input type="checkbox" ng-click="markAsComplete(subj, $index); eventChecked =! eventChecked">
-		           </label>
-		           <label ng-class="{doneClass:eventChecked}"><span class="eventname">{{subj.name}}</span><span class="assignmentname">{{subj.title}}</span><span class="duedate">{{subj.due}}</span><span class="doneMessage" ng-if="eventChecked">Completed!</span></label>
+		        <li class="item item-checkbox checkbox-calm" ng-repeat="subj in events() track by $index" id="listItem{{$index}}">
+		           <div class="checkbox">
+		             <input type="checkbox" ng-model="event.checked" ng-click="eventChecked =! eventChecked; markAsComplete(subj, $index, event.checked);">
+		           </div>
+		           <div ng-class="{doneClass:eventChecked}">
+		           		<span class="eventname">{{subj.name}}</span>
+		           		<span class="assignmentname">{{subj.title}}</span>
+		           		<span class="duedate">{{subj.due}}</span><span class="doneMessage" ng-if="eventChecked">Completed!</span>
+		           		<a href="" ng-show="eventChecked" class="delete-event" ng-click="openDeleteModal(subj, event.checked, $index);"><i class="icon ion-trash-b"></i></a>
+		           </div>
+		           <!-- deleteEvent(subj) -->
 		        </li>
 		      </ul>
 		      <div class="calendar-button-container">
-				<button type="button" class="button button-assertive" ng-click="addToCalendar();">Add to Google Calendar</button>
+				<button type="button" class="button button-assertive" ng-click="addToCalendar();openCalModal();">Add Events to Google Calendar</button>
 			  </div>
+
+			  <script id="calendar-modal.html" type="text/ng-template">
+				  <ion-modal-view>
+				    <ion-header-bar>
+				      <h1 class="title">Calendar events</h1>
+				    </ion-header-bar>
+				    <ion-content>
+				      <div class="delete-message">
+				      	<h5>All incomplete assignments have been added to your calendar as events. You may choose to delete them from the list.</h5>
+				      	<button class="button button-assertive button-primary" ng-click="closeModal()">Okay</button>
+				      </div>
+				      
+				    </ion-content>
+				  </ion-modal-view>
+			  </script>
+
+			  <script id="event-modal.html" type="text/ng-template">
+				  <ion-modal-view>
+				    <ion-header-bar>
+				      <h1 class="title">Delete deadline</h1>
+				    </ion-header-bar>
+				    <ion-content>
+				      <div class="delete-message">
+				      	<h5>You have marked the assignment to be complete! Are you sure you want to remove it from the list?</h5>
+				      	<button class="button button-assertive button-primary" ng-click="deleteEvent()">Confirm</button>
+				      	<button class="button button-assertive button-primary" ng-click="closeModal()">Cancel</button>
+				      </div>
+				      
+				    </ion-content>
+				  </ion-modal-view>
+			  </script>
+
 		</div>	
 			
 		</ion-content>

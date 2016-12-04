@@ -7,12 +7,14 @@ h1.app-title{
 	color: #333333;
 	text-align: center;
 	margin: 40px 0 20px;
+	padding: 0 10px;
 }
 p.app-tagline{
 	text-align: center;
 	color: #333333;
 	font-size: 14px;
 	font-weight: bolder;
+	padding: 0 10px;
 }
 .app-logo{
 	text-align: center;
@@ -90,13 +92,14 @@ li.item{
 	font-size: 14px;
 }
 
-li.item label.doneClass > span{
+li.item .doneClass > span{
 	text-decoration: line-through;
 }
 
-li.item label.doneClass > span.doneMessage{
+li.item .doneClass > span.doneMessage{
 	color: #387ef5;
 	text-decoration: none;
+	width: 10%;
 }
 
 li.item span{
@@ -106,4 +109,36 @@ li.item span{
 
 li.item span.eventname{
 	width: 20%;
+}
+
+a.delete-event{
+	color: #ef473a;
+	font-size: 20px;
+    position: absolute;
+    z-index: 100;
+}
+
+/* modal styles */
+.delete-message{
+	text-align: center;
+	padding: 10px;
+}
+.delete-message button{
+	margin-right: 10px;
+}
+
+/* responsive styles */
+/* mobile styles */
+@media screen and (max-width: 600px){
+	li.item span{
+		display: block;
+	}
+	li.item .doneClass > span.doneMessage{
+		display: inline-block;
+		width: 40%;
+		margin-top: 10px;
+	}
+	a.delete-event{
+		margin-top: 10px;
+	}
 }
