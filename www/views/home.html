@@ -16,20 +16,17 @@
 			<ul class="list">
 		        <li class="item item-checkbox checkbox-calm" ng-repeat="subj in events() track by $index" id="listItem{{$index}}">
 		           <div class="checkbox">
-		             <input type="checkbox" ng-model="event.checked" ng-click="eventChecked =! eventChecked; markAsComplete(subj, $index, event.checked);">
+		             <input type="checkbox" ng-model="event.checked[$index]" ng-click="markAsComplete(subj, $index, event.checked[$index]);">
 		           </div>
-		           <div ng-class="{doneClass:eventChecked}">
+		           <div ng-class="{doneClass:checkModel(event.checked[$index])==true}" class="event-details">
 		           		<span class="eventname">{{subj.name}}</span>
 		           		<span class="assignmentname">{{subj.title}}</span>
-		           		<span class="duedate">{{subj.due}}</span><span class="doneMessage" ng-if="eventChecked">Completed!</span>
-		           		<a href="" ng-show="eventChecked" class="delete-event" ng-click="openDeleteModal(subj, event.checked, $index);"><i class="icon ion-trash-b"></i></a>
+		           		<span class="duedate">{{subj.due}}</span><span class="doneMessage" ng-if="checkModel(event.checked[$index])==true;">Completed!</span>
+		           		<a href="" ng-show="checkModel(event.checked[$index])==true;" class="delete-event" ng-click="openDeleteModal(subj, event.checked[$index], $index);"><i class="icon ion-trash-b"></i></a>
 		           </div>
 		           <!-- deleteEvent(subj) -->
 		        </li>
 		      </ul>
-		      <div class="calendar-button-container">
-				<button type="button" class="button button-assertive" ng-click="addToCalendar();openCalModal();">Add Events to Google Calendar</button>
-			  </div>
 
 			  <script id="calendar-modal.html" type="text/ng-template">
 				  <ion-modal-view>
@@ -39,7 +36,7 @@
 				    <ion-content>
 				      <div class="delete-message">
 				      	<h5>All incomplete assignments have been added to your calendar as events. You may choose to delete them from the list.</h5>
-				      	<button class="button button-assertive button-primary" ng-click="closeModal()">Okay</button>
+				      	<button class="button button-assertive button-primary" ng-click="closeCalModal()">Okay</button>
 				      </div>
 				      
 				    </ion-content>
@@ -63,6 +60,10 @@
 			  </script>
 
 		</div>	
+
+		<div class="calendar-button-container">
+			<button type="button" class="button button-assertive" ng-click="addToCalendar();openCalModal();">Add Events to Google Calendar</button>
+		  </div>
 			
 		</ion-content>
 </ion-view>

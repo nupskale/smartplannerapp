@@ -20,6 +20,9 @@ p.app-tagline{
 	text-align: center;
 	margin: 40px 0;
 }
+.app-logo img{
+	width: 200px;
+}
 .login-container.pane{
 	background-color: #A7FFEB;
 }
@@ -34,6 +37,9 @@ p.app-tagline{
 /* homepage styles */
 .content.has-header{
 	top: 0;
+	max-height: 500px;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .content h4{
@@ -81,6 +87,7 @@ p.app-tagline{
 
 .calendar-button-container{
 	text-align: center;
+	padding-top: 20px;
 }
 
 .calendar-button-container button{

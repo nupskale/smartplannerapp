@@ -108,7 +108,6 @@ app.controller('LoginCtrl', function($scope, $state, UserService){
 
 app.controller('HomepageCtrl', function($scope, $state, UserService, $ionicModal){
 
-	$scope.eventChecked = false;
 	$scope.eventModel = 1;
 
 	$scope.eventsArray = [{}];
@@ -116,6 +115,16 @@ app.controller('HomepageCtrl', function($scope, $state, UserService, $ionicModal
 	$scope.eventsCompleted = [{}];
 	$scope.eventsCompleted.pop();
 	$scope.assnmtid = "";
+
+	/*$scope.event = {
+		checked:{}
+	};*/
+
+	$scope.checkModel = function(valmodel){
+		if(valmodel == true){
+			return true;
+		}
+	};
 
 	$scope.iter = 0;
 
@@ -158,21 +167,15 @@ app.controller('HomepageCtrl', function($scope, $state, UserService, $ionicModal
 
 	$scope.monthKey = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-	$scope.markAsComplete = function(assignmentName, index, checked){
-		//$scope.eventsCompleted.push(assignmentName);
+	$scope.markAsComplete = function(assignmentName, index, echecked){
 		$scope.remInd = 0;
-		if(checked==false){
+		if(echecked==true){
 			$scope.eventsCompleted.push(assignmentName);
-			checked = true;
 		}else{
 			$scope.remInd = $scope.eventsCompleted.findIndex(x => x.assignment == assignmentName.assignment);
 			$scope.eventsCompleted.splice($scope.remInd, 1);
-			checked = false;
 		}
 	};
-
-
-
 
 	$ionicModal.fromTemplateUrl('calendar-modal.html', {
 	    scope: $scope,
@@ -195,20 +198,23 @@ app.controller('HomepageCtrl', function($scope, $state, UserService, $ionicModal
 	  });
 	  $scope.eventtodelete = {};
 	  $scope.removeInd = 0;
-	  $scope.openDeleteModal = function(eventstr, eventstrike, eventId) {
+	  $scope.openDeleteModal = function(eventDesc, modelVal, eventId) {
 	  	$scope.assnmtid = eventId;
-	  	$scope.eventModel = 0;
-	  	$scope.eventtodelete = eventstr;
+	  	$scope.eventtodelete = eventDesc;
 	    $scope.modal1.show();
 	  };
 	  $scope.deleteEvent = function(){
-	  	$scope.eventChecked = false;
-	  	$scope.removeInd = $scope.eventsArray.findIndex(x => x.assignment == $scope.eventtodelete.assignment);		
-		$scope.eventsArray.splice($scope.removeInd, 1);
-		var targetElem = document.getElementById("listItem"+$scope.assnmtid);
-		angular.element(targetElem).children("div.doneClass").removeClass("doneClass");
-		angular.element(targetElem).children("div.checkbox input").removeAttr("checked");
-		$scope.eventModel = 0;
+	  	//$scope.removeInd = $scope.eventsArray.findIndex(x => x.assignment == $scope.eventtodelete.assignment);
+		//$scope.eventsArray.splice($scope.removeInd, 1);
+		$scope.removeInd = $scope.eventsCompleted.findIndex(x => x.assignment == $scope.eventtodelete.assignment);
+		$scope.eventsCompleted.splice($scope.removeInd, 1);
+		$scope.eventsArray.splice($scope.assnmtid, 1);
+		/*var targetElem = document.getElementById("listItem"+$scope.assnmtid);
+		if(!(angular.element(targetElem).children("div.event-details").hasClass("doneClass"))){
+			angular.element(targetElem).children("div.doneClass").removeClass("doneClass");
+			angular.element(targetElem).children("div.checkbox input").removeAttr("checked");
+			$scope.eventModel = 0;
+		}*/		
 		$scope.modal1.hide();
 	  };
 	  $scope.closeModal = function() {
