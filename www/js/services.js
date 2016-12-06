@@ -2,14 +2,12 @@ app.factory('UserService', function(){
 	var userdata = {};
 	userdata.sendUser = function(userdetails){
 		this.userdetails = userdetails;
-		/*console.log(userdetails);*/
 	};	
 	userdata.getUser = function(){
 		return this.userdetails;
 	};
 	userdata.sendSubjectLine = function(subjects){
 		this.subjects = subjects;
-		/*console.log(this.subjects);*/
 	};
 	userdata.getSubjectLine = function(){
 		return this.subjects;

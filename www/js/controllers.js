@@ -83,8 +83,7 @@ app.controller('LoginCtrl', function($scope, $state, UserService){
 					}
 				}
 				bodyArr.push($scope.allMessagesList[j].snippet);
-			}	
-			/*console.log(subsArr);*/
+			}
 			UserService.sendSubjectLine(subsArr);		
 			UserService.sendBody(bodyArr);
 			UserService.sendToken(token);
@@ -115,10 +114,6 @@ app.controller('HomepageCtrl', function($scope, $state, UserService, $ionicModal
 	$scope.eventsCompleted = [{}];
 	$scope.eventsCompleted.pop();
 	$scope.assnmtid = "";
-
-	/*$scope.event = {
-		checked:{}
-	};*/
 
 	$scope.checkModel = function(valmodel){
 		if(valmodel == true){
@@ -204,17 +199,9 @@ app.controller('HomepageCtrl', function($scope, $state, UserService, $ionicModal
 	    $scope.modal1.show();
 	  };
 	  $scope.deleteEvent = function(){
-	  	//$scope.removeInd = $scope.eventsArray.findIndex(x => x.assignment == $scope.eventtodelete.assignment);
-		//$scope.eventsArray.splice($scope.removeInd, 1);
 		$scope.removeInd = $scope.eventsCompleted.findIndex(x => x.assignment == $scope.eventtodelete.assignment);
 		$scope.eventsCompleted.splice($scope.removeInd, 1);
-		$scope.eventsArray.splice($scope.assnmtid, 1);
-		/*var targetElem = document.getElementById("listItem"+$scope.assnmtid);
-		if(!(angular.element(targetElem).children("div.event-details").hasClass("doneClass"))){
-			angular.element(targetElem).children("div.doneClass").removeClass("doneClass");
-			angular.element(targetElem).children("div.checkbox input").removeAttr("checked");
-			$scope.eventModel = 0;
-		}*/		
+		$scope.eventsArray.splice($scope.assnmtid, 1);	
 		$scope.modal1.hide();
 	  };
 	  $scope.closeModal = function() {
@@ -234,13 +221,6 @@ app.controller('HomepageCtrl', function($scope, $state, UserService, $ionicModal
 	  $scope.$on('modal.removed', function() {
 	    // Execute action
 	  });
-
-
-	/*$scope.deleteEvent = function(asnmname){
-		$scope.removeInd = $scope.eventsArray.findIndex(x => x.assignment == asnmname.assignment);
-		$scope.eventsArray.splice($scope.removeInd, 1);
-	};
-*/
 
 	var userNow = firebase.auth().currentUser.uid;
 	$scope.subjectsArray = [];
