@@ -1,5 +1,4 @@
-#H1 Smart Planner Application for automatic academic deadline scheduling
-==================================
+#Smart Planner Application for automatic academic deadline scheduling
 
 Smart planner is an Android based web application which brings deadlines from user's gmail account into the application and creates calendar events for incomplete assignments on Google Calendar.
 
