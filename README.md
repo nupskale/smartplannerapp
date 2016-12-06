@@ -13,9 +13,9 @@ This project is developed using the following:
 How to run the code
 ==================================
 
-Install node.js from `nodejs.org <https://nodejs.org/en/>`
-Download code from Github
-Open node.js command prompt and navigate to the code directory.
+Install node.js from [nodejs.org](https://nodejs.org/en/)
+Download smartplannerapp code from Github
+Open node.js command prompt and navigate to the code directory
 Install npm using
 ```
 $ npm install
@@ -36,7 +36,7 @@ How to set up a firebase account for google sign in
 * Click on 'Create New Project' or 'Import Google project' if you have an existing project as a google developer.
 * On the Overview page, select the option for 'Add Firebase to your web app'.
 * This gives the code snippet which can be pasted in your application.
-* In the application, implement google login using firebase by
+* In the application controller logic, implement google login using firebase by
 ```javascript
 var provider = new firebase.auth.GoogleAuthProvider();
 ```
