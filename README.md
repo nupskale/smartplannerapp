@@ -1,4 +1,4 @@
-Smart Planner Application for automatic academic deadline scheduling
+#H1 Smart Planner Application for automatic academic deadline scheduling
 ==================================
 
 Smart planner is an Android based web application which brings deadlines from user's gmail account into the application and creates calendar events for incomplete assignments on Google Calendar.
@@ -18,20 +18,17 @@ Install node.js from `nodejs.org <https://nodejs.org/en/>`
 Download code from Github
 Open node.js command prompt and navigate to the code directory.
 Install npm using
-.. code-block:: ini
-
-    $ npm install
-
+```
+$ npm install
+```
 Install ionic using
-.. code-block:: ini
-
-    $ npm install -g cordova ionic
-
+```
+$ npm install -g cordova ionic
+```
 Run the following command
-.. code-block:: ini
-
-    $ ionic serve
-
+```
+$ ionic serve
+```
 How to set up a firebase account for google sign in
 ==================================
 
@@ -41,12 +38,11 @@ How to set up a firebase account for google sign in
 * On the Overview page, select the option for 'Add Firebase to your web app'.
 * This gives the code snippet which can be pasted in your application.
 * In the application, implement google login using firebase by
-.. code-block:: ini
-
-	var provider = new firebase.auth.GoogleAuthProvider();
-
+```javascript
+var provider = new firebase.auth.GoogleAuthProvider();
+```
 * Authenticate user by
-.. code-block:: ini
-
-	firebase.auth().signInWithRedirect(provider);
+```javascript
+firebase.auth().signInWithRedirect(provider);
+```
 * The result function gives an access token which can be used for gmail and calendar APIs.
